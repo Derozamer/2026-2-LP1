@@ -1,0 +1,68 @@
+1.1 Arreglo Unidimensional: recorrido y estadísticas.
+a) ¿Cómo se relaciona datos[i] con *(datos + i)? Probar ambas formas y
+confirmar que dan el mismo resultado.
+Se relacionan en el valor que contienen. 
+
+b)¿Qué pasa si imprimen sizeof(datos) / sizeof(datos[0])? ¿Y si datos fuera un
+parámetro de función?
+Se imprimen el tamaño de cada uno, 8 bytes y 4 bytes respectivamente.
+
+Al parecer el sizeof(datos) siendo parámetro de una función no cambia su tamaño.
+1.2 Arreglo bidimensional: matriz y operaciones
+a) ¿Cómo se almacena int m[3][4] en memoria? ¿Es un bloque contiguo?
+Verifíquenlo imprimiendo &m[0][0], &m[0][1], &m[1][0] y observando las
+diferencias.
+&m[0][0]:-1952449616
+&m[0][1]:-1952449612
+&m[1][0]:-1952449600
+Es como separar una fila de datos en bloques.
+
+b) ¿Cuál es la diferencia entre m[i][j] y *(*(m + i) + j)?
+La única diferencia es que m[i][j] es la notación de corchetes tradicional, mientras que *(*(m + i) + j) es la notación de aritmética de punteros pura; de hecho, 
+el compilador siempre traduce m[i][j] a esa fórmula de punteros por debajo.
+
+2.1 Declaración, desrefencia y direferencia y dirección.
+a) ¿Por qué printf("%p", p) requiere el cast (void *)? 
+Es por portabilidad y por las reglas de variadic functions.
+%p esta diseñado para recibir el puntero void * ya que es un tipo de puntero que apunta a cualquier objeto. 
+
+b) ¿Qué diferencia hay entre int *p e int* p? ¿Y entre int *p, q y int *p, *q?
+Entre int *p e int* p no hay diferencia ya que es cuestión de escritura, ambas son punteros.
+En int *p, q y int *p, *q en el primero p es puntero y q es un entero, en el segundo ambos p y q son punteros.
+
+2.2 Aritmética de punteros sobre arreglos
+a) Concepto clave: p + 5 no suma 5 bytes, suma 5 * sizeof(int) bytes.
+Verifíquenlo imprimiendo (char *)p y (char *)(p+5) y calculando la diferencia
+en bytes con (char *)(p+5) - (char *)p.
+(char *)p : -2126513808
+(char *)(p+5) : -2126513788
+(char *)(p+5) - (char *)p : 20
+
+b) ¿Por qué p[i] es exactamente *(p + i)? ¿Qué dice el estándar C al respecto?
+Porque el estándar de C define explícitamente que la notación de corchetes p[i] es una abreviatura (azúcar sintáctico) de la aritmética de punteros.
+
+c) ¿Por qué 3[p] compila? Explicar la conmutatividad de + y la definición de [].
+La conmutatividad de la suma (+): La operación de suma es conmutativa, lo que significa que el orden de los factores no altera el resultado. Por lo tanto, sumar 3 + p es exactamente lo mismo que sumar p + 3
+La definición de []: Según el estándar de C, cualquier expresión de corchetes A[B] se define literalmente como (*((E1) + (E2))). Si aplicamos esto a 3[p], el compilador lo traduce como (*((3) + (p))).
+
+
+d) Trampa: ¿qué pasa con p + 8 (uno más allá del último elemento)? ¿Es válido crearlo? ¿Se puede desreferenciar?
+Sí, es válido crearlo: El estándar de C permite que un puntero apunte a la posición inmediatamente posterior al final del array.
+No se puede desreferenciar debido a que intentar acceder a su valor (*(p + 8)) causa comportamiento indefinido, ya que esa dirección de memoria no pertenece al array.
+3.1 Visualizador de memoria de un arreglo
+a) ¿Por qué en x86-64 los bytes de int v[0] = 1 se ven como 01 00 00 00? Discutir endianness (little-endian).
+Porque x86-64 usa little-endian: el byte menos significativo se guarda primero.
+
+
+b) ¿Qué pasa con el double? ¿Qué significa la mantisa y el exponente en esos bytes? (Solo conceptualmente, no necesitan decodificarlo.)
+El double ocupa 8 bytes y usa IEEE-754.
+
+Mantisa: representa la parte significativa del número.
+Exponente: indica la potencia de 2.
+Para 3.14: 1f 85 eb 51 b8 1e 09 40.
+
+c) ¿Cómo cambiaría si la máquina fuera big-endian?
+Los bytes aparecerían en orden inverso.
+Ejemplo:
+Little-endian: 01 00 00 00
+Big-endian:    00 00 00 01 
